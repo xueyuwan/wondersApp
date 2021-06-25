@@ -10,9 +10,12 @@
   }
   var u = navigator.userAgent.toLowerCase()
   WondersApp.prototype.QuickVersion = {
+    // isWeixin: u.indexOf('micromessenger') != -1,
+    // isApp: u.indexOf('android_smartidata') != -1,
+    // isIOSApp: u.indexOf('ios_smartidata') != -1
     isWeixin: u.indexOf('micromessenger') != -1,
-    isApp: u.indexOf('android_smartidata') != -1,
-    isIOSApp: u.indexOf('ios_smartidata') != -1,
+    isApp: u.indexOf('android_health_hainan') != -1,
+    isIOSApp: u.indexOf('ios_health_hainan') != -1,
   }
   WondersApp.prototype.getAppIndex = function (name) {
     let thisIndex = this.indexCount++
@@ -44,7 +47,7 @@
     var appIndex = this.getAppIndex('qrCodeScan')
     if (callback) {
       this.callAppMap[appIndex] = callback
-      // console.log(this.callAppMap)
+      // console.log(this.callAppMap);
     }
     let params = { type: 'qrCodeScan', params: data, callBackMethod: appIndex }
     this.callApp(params)
@@ -205,6 +208,18 @@
     }
     this.callApp(params)
   }
+  WondersApp.prototype.refreshToken = function (data, callback) {
+    var appIndex = this.getAppIndex('refreshToken')
+    if (callback) {
+      this.callAppMap[appIndex] = callback
+    }
+    let params = {
+      type: 'refreshToken',
+      params: data,
+      callBackMethod: appIndex,
+    }
+    this.callApp(params)
+  }
   WondersApp.prototype.tabConfig = function (data) {
     let params = { type: 'tabConfig', params: data }
     this.callApp(params)
@@ -304,6 +319,7 @@
     hasNavigation,
     float,
   ) {
+    console.log('进入原生跳转')
     let params = {
       type: 'H5',
       toPage: url,
@@ -314,8 +330,10 @@
       animate: 'push',
     }
     if (this.QuickVersion.isIOSApp) {
+      console.log('isIOSApp')
       window.webkit.messageHandlers.forward.postMessage(JSON.stringify(params))
     } else if (this.QuickVersion.isApp) {
+      console.log('isApp')
       window.WDAndroid.forward(JSON.stringify(params))
     } else {
       console.log('H5')
